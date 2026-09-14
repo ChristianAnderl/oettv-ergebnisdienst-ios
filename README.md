@@ -20,3 +20,12 @@ Open the folder in Xcode on a Mac, set a unique Bundle Identifier and Apple Team
 For users without a Mac, the project can be built with a suitable cloud CI service and distributed through TestFlight.
 
 Important: live XTTV page layouts are loaded from the public XTTV service; the app does not claim API access.
+
+
+## GitHub Actions
+
+The repository now contains an Xcode project and a GitHub Actions workflow.
+The workflow uses a GitHub-hosted macOS runner to perform an unsigned iOS build.
+GitHub documents that standard macOS runners are free and unlimited for public repositories.
+
+This first workflow intentionally does NOT sign the app. Signing for installation on an iPhone is the next step.

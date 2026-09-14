@@ -1,0 +1,41 @@
+name: iOS Build
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build iOS app (unsigned)
+        run: |
+          set -o pipefail
+          xcodebuild             -project OETTVErgebnisdienst.xcodeproj             -scheme OETTVErgebnisdienst             -sdk iphoneos             -configuration Release             -derivedDataPath build             CODE_SIGNING_ALLOWED=NO             CODE_SIGNING_REQUIRED=NO             build | tee xcodebuild.log
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-log
+          path: xcodebuild.log
+
+      - name: Package unsigned app
+        if: success()
+        run: |
+          cd build/Build/Products/Release-iphoneos
+          zip -r "$GITHUB_WORKSPACE/OETTVErgebnisdienst-unsigned.app.zip" OETTVErgebnisdienst.app
+
+      - name: Upload unsigned app
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: OETTVErgebnisdienst-unsigned
+          path: OETTVErgebnisdienst-unsigned.app.zip
